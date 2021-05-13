@@ -1,5 +1,7 @@
 # incremental-regeneration
 
+![npm](https://img.shields.io/npm/v/incremental-regeneration?color=green&logo=npm)
+
 ## About
 
 This middleware adds so-called Incremental Static Regeneration to your server.
