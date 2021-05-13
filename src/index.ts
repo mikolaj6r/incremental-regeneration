@@ -7,15 +7,27 @@ import { ClientRequest, ServerResponse } from "http";
 
 import parser from "@polka/url";
 
-import { mkdirp, toAssume, viaCache, CacheObject } from "./utils";
-const writeFile = promisify(fs.writeFile);
+import { mkdirp, viaCache, CacheObject } from "./utils";
 
-const EVENT_NAME = "revalidated";
-let extensions = ["html", "htm"];
-let fallback = "/";
+const writeFile = promisify(fs.writeFile);
 
 type ServerResponseOptions = {
   _name: string;
+  _cache: Map<string, CacheObject>;
+};
+
+type Middleware = (
+  req: ClientRequest,
+  res: ServerResponse,
+  next?: Middleware
+) => {};
+type Headers = {
+  [index: string]: string;
+};
+
+type Params = {
+  middleware: Middleware;
+  revalidateTime: number;
 };
 
 class ServerResponseMock extends Writable {
@@ -25,10 +37,12 @@ class ServerResponseMock extends Writable {
   _buffer: Array<Buffer> = [];
   _finished = false;
   _name = "";
+  _cache: Map<string, CacheObject>;
 
   constructor(options: ServerResponseOptions) {
     super();
     this._name = options._name;
+    this._cache = options._cache;
   }
 
   _write(
@@ -55,7 +69,7 @@ class ServerResponseMock extends Writable {
     writeFile(export_file, Buffer.concat(this._buffer)).then(() => {
       //const obj = cache.get(this._name);
 
-      cache.set(this._name, {
+      this._cache.set(this._name, {
         revalidating: false,
         abs: export_file,
         timestamp: Date.now(),
@@ -74,24 +88,17 @@ class ServerResponseMock extends Writable {
   }
 }
 
+const EVENT_NAME = "revalidated";
+let extensions = ["html", "htm"];
+let fallback = "/";
 const cache: Map<string, CacheObject> = new Map();
-
 let lookup = viaCache.bind(0, cache);
 
-type Middleware = (
-  req: ClientRequest,
-  res: ServerResponse,
-  next?: Middleware
-) => {};
-type Headers = {
-  [index: string]: string;
-};
-
-export default function (middleware: Middleware) {
+export default function ({ middleware, revalidateTime = 10 }: Params) {
   return function (req: ClientRequest, res: ServerResponse, next: Middleware) {
     let name = req.path || parser(req, true).pathname;
 
-    let data = lookup(name, extensions) || lookup(fallback, extensions);
+    //let data = lookup(name, extensions) || lookup(fallback, extensions);
 
     let code = 200;
     let defaultHeaders = {
@@ -113,10 +120,7 @@ export default function (middleware: Middleware) {
         res.writeHead(code, defaultHeaders);
         fs.createReadStream(cacheItem.abs).pipe(res);
 
-        if (
-          cacheItem.timestamp! <
-          Date.now() - parseInt(process.env.revalidateTime || "10", 10) * 1000
-        ) {
+        if (cacheItem.timestamp! < Date.now() - revalidateTime * 1000) {
           if (cacheItem.revalidating) {
             return;
           }
@@ -131,10 +135,12 @@ export default function (middleware: Middleware) {
           // intercept data so that it can be exported
           const responseMock = new ServerResponseMock({
             _name: name,
+            _cache: cache,
           });
 
           // @ts-ignore
           middleware(req, responseMock);
+        } else {
         }
       }
     } else {
@@ -184,6 +190,7 @@ export default function (middleware: Middleware) {
             ...cache.get(name),
             abs: export_file,
             timestamp: Date.now(),
+            revalidating: false,
           });
 
           return returned;

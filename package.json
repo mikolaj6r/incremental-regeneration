@@ -4,10 +4,13 @@
   "description": "",
   "type": "module",
   "source": "src/index.ts",
-  "exports": "./dist/index.modern.js",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.module.js",
-  "unpkg": "./dist/index.umd.js",
+  "main": "dist/index.js",    
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    "require": "./dist/index.js",
+    "default": "./dist/index.mjs"
+  },
   "scripts": {
     "build": "microbundle --target node",
     "dev": "microbundle watch --target node"
