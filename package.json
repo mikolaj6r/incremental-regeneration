@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "microbundle --target node",
-    "dev": "microbundle watch --target node"
+    "dev": "microbundle watch --target node",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
