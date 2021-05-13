@@ -2,17 +2,12 @@
   "name": "incremental-regeneration",
   "version": "0.2.0",
   "description": "",
-  "type": "module",
   "source": "src/index.ts",
   "main": "dist/index.js",
-  "umd:main": "dist/index.umd.js",
+  "exports": "./dist/index.modern.js",
   "module": "dist/index.mjs",
-  "exports": {
-    "require": "./dist/index.js",
-    "default": "./dist/index.mjs"
-  },
   "scripts": {
-    "build": "microbundle --target node",
+    "build": "microbundle --target node --pkg-main ",
     "dev": "microbundle watch --target node",
     "prepublishOnly": "npm run build"
   },
