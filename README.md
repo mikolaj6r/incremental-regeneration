@@ -8,6 +8,12 @@ This middleware adds so-called Incremental Static Regeneration to your server.
 
 [More on ISR](https://www.netlify.com/blog/2021/03/08/incremental-static-regeneration-its-benefits-and-its-flaws/)
 
+## Installation
+
+```bash
+npm i incremental-regeneration
+```
+
 ## Basic usage
 
 ```js
