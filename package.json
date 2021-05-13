@@ -1,0 +1,25 @@
+{
+  "name": "incremental-regeneration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikolaj6r/incremental-regeneration.git"
+  },
+  "keywords": [],
+  "author": "Mikołaj Romanowski <mikolaj6r@gmail.com> (https://twitter.com/mikolaj6r)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikolaj6r/incremental-regeneration/issues"
+  },
+  "homepage": "https://github.com/mikolaj6r/incremental-regeneration#readme",
+  "devDependencies": {
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.4"
+  }
+}
