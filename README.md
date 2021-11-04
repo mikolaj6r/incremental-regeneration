@@ -17,14 +17,14 @@ npm i incremental-regeneration
 ## Basic usage
 
 ```js
-import isrMiddleware from 'incremental-regeneration';
+import incrementalRegeneration from 'incremental-regeneration';
 
 // define your server
 const server = ...
 
 const myFunctionThatRendersPage = (req, res) => void;
 
-server.use(isrMiddleware({
+server.use(incrementalRegeneration({
   middleware: myFunctionThatRendersPage,
   revalidateTime: 10
 }))
@@ -33,6 +33,6 @@ server.use(isrMiddleware({
 
 ## Options
 
-`revalidateTime` (in seconds): time boundary after which the resource would be regenerated
+`revalidateTime` (in seconds): time boundary after which the resource will be regenerated
 
 `middleware`: function that matches type (req: http.ClientRequest, res: http.ServerResponse) => void. This function is expected to render a response and write it to res param.
